@@ -1,59 +1,60 @@
-version: '3.8'
+version: '3.8'  # Указываем версию docker-compose файла
 
-services:
-  etcd:
-    image: quay.io/coreos/etcd:v3.3.13
+services:  # Определяем сервисы (контейнеры), которые будут запущены
+
+  etcd:  # Сервис для etcd, который используется для хранения конфигурации кластера Patroni
+    image: quay.io/coreos/etcd:v3.3.13  # Указываем образ etcd
     environment:
-      ETCDCTL_API: "3"
-      ETCD_NAME: "postgres-cluster"
-      ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://etcd:2380"
-      ETCD_INITIAL_CLUSTER: "postgres-cluster=http://etcd:2380"
-      ETCD_INITIAL_CLUSTER_STATE: "new"
-      ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster"
-      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
-      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"
-      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+      ETCDCTL_API: "3"  # Версия API для etcdctl
+      ETCD_NAME: "postgres-cluster"  # Имя кластера etcd
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://etcd:2380"  # URL для рекламы peer соединений
+      ETCD_INITIAL_CLUSTER: "postgres-cluster=http://etcd:2380"  # URL начального кластера
+      ETCD_INITIAL_CLUSTER_STATE: "new"  # Состояние начального кластера
+      ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster"  # Токен начального кластера
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"  # URL для прослушивания клиентских соединений
+      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"  # URL для прослушивания peer соединений
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"  # URL для рекламы клиентских соединений
     ports:
-      - "2379:2379"
-      - "2380:2380"
+      - "2379:2379"  # Пробрасываем порт 2379 для доступа извне (клиентские запросы)
+      - "2380:2380"  # Пробрасываем порт 2380 для доступа извне (peer-коммуникации)
 
-  postgres0:
-    image: patroni
-    environment:
-      PATRONI_SCOPE: postgres-cluster
-      PATRONI_NAME: postgres0
-      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"
-      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres0:8008"
-      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"
-      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres0:5432"
-      PATRONI_ETCD_HOSTS: "etcd:2379"
-      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"
+  postgres0:  # Первый экземпляр сервиса базы данных PostgreSQL с Patroni
+    image: patroni  # Указываем образ Patroni
+    environment:  # Переменные окружения для Patroni
+      PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
+      PATRONI_NAME: postgres0  # Имя этого экземпляра Patroni
+      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"  # Адрес для прослушивания REST API
+      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres0:8008"  # Адрес для подключения к REST API
+      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"  # Адрес для прослушивания PostgreSQL
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres0:5432"  # Адрес для подключения к PostgreSQL
+      PATRONI_ETCD_HOSTS: "etcd:2379"  # Адрес хоста etcd
+      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"  # Директория для данных PostgreSQL
     volumes:
-      - ./data0:/var/lib/postgresql/data
+      - ./data0:/var/lib/postgresql/data  # Локальная директория для данных PostgreSQL
     ports:
-      - "5432:5432"
-      - "8008:8008"
+      - "5432:5432"  # Пробрасываем порт 5432 для доступа к PostgreSQL извне
+      - "8008:8008"  # Пробрасываем порт 8008 для доступа к REST API Patroni извне
 
-  postgres1:
-    image: patroni
-    environment:
-      PATRONI_SCOPE: postgres-cluster
-      PATRONI_NAME: postgres1
-      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"
-      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres1:8008"
-      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"
-      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres1:5432"
-      PATRONI_ETCD_HOSTS: "etcd:2379"
-      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"
+  postgres1:  # Второй экземпляр сервиса базы данных PostgreSQL с Patroni
+    image: patroni  # Указываем образ Patroni
+    environment:  # Переменные окружения для Patroni
+      PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
+      PATRONI_NAME: postgres1  # Имя этого экземпляра Patroni
+      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"  # Адрес для прослушивания REST API
+      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres1:8008"  # Адрес для подключения к REST API
+      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"  # Адрес для прослушивания PostgreSQL
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres1:5432"  # Адрес для подключения к PostgreSQL
+      PATRONI_ETCD_HOSTS: "etcd:2379"  # Адрес хоста etcd
+      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"  # Директория для данных PostgreSQL
     volumes:
-      - ./data1:/var/lib/postgresql/data
+      - ./data1:/var/lib/postgresql/data  # Локальная директория для данных PostgreSQL
     ports:
-      - "5433:5432"
-      - "8009:8008"
+      - "5433:5432"  # Пробрасываем порт 5433 внешнего хоста на порт 5432 контейнера с PostgreSQL
+      - "8009:8008"  # Пробрасываем порт 8009 внешнего хоста на порт 8008 контейнера с REST API Patroni
 
-  haproxy:
-    image: haproxy:2.3
+  haproxy:  # Сервис для HAProxy, который используется для балансировки нагрузки и автоматического failover
+    image: haproxy:2.3  # Указываем образ HAProxy
     volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg  # Монтируем локальный файл конфигурации в контейнер
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Пробрасываем порт 5000 для доступа к HAProxy извне
