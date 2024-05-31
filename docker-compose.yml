@@ -19,7 +19,7 @@ services:  # Определяем сервисы (контейнеры), кот�
       - "2380:2380"  # Пробрасываем порт 2380 для доступа извне (peer-коммуникации)
 
   postgres0:  # Первый экземпляр сервиса базы данных PostgreSQL с Patroni
-    image: registry.opensource.zalan.do/acid/patroni:latest  # Используем актуальный образ Patroni
+    image: zalandoresearch/patroni:latest  # Используем образ zalandoresearch/patroni из Docker Hub
     environment:  # Переменные окружения для Patroni
       PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
       PATRONI_NAME: postgres0  # Имя этого экземпляра Patroni
@@ -36,7 +36,7 @@ services:  # Определяем сервисы (контейнеры), кот�
       - "8008:8008"  # Пробрасываем порт 8008 для доступа к REST API Patroni извне
 
   postgres1:  # Второй экземпляр сервиса базы данных PostgreSQL с Patroni
-    image: registry.opensource.zalan.do/acid/patroni:latest  # Используем актуальный образ Patroni
+    image: zalandoresearch/patroni:latest  # Используем образ zalandoresearch/patroni из Docker Hub
     environment:  # Переменные окружения для Patroni
       PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
       PATRONI_NAME: postgres1  # Имя этого экземпляра Patroni
