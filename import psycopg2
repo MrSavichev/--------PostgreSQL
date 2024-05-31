@@ -1,0 +1,29 @@
+import psycopg2
+import time
+
+def insert_rows():
+    conn = None
+    while True:
+        try:
+            conn = psycopg2.connect(
+                host="haproxy",
+                database="postgres",
+                user="postgres",
+                password="postgres"
+            )
+            cur = conn.cursor()
+            cur.execute("CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, timestamp TIMESTAMPTZ DEFAULT NOW())")
+            cur.execute("INSERT INTO test_table (DEFAULT) VALUES (DEFAULT)")
+            conn.commit()
+            cur.close()
+            conn.close()
+            print("Inserted a row.")
+            time.sleep(5)
+        except Exception as error:
+            print(f"Error: {error}")
+            if conn:
+                conn.close()
+            time.sleep(5)
+
+if __name__ == "__main__":
+    insert_rows()

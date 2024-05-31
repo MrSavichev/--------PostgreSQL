@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.3.13
+    environment:
+      ETCDCTL_API: "3"
+      ETCD_NAME: "postgres-cluster"
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://etcd:2380"
+      ETCD_INITIAL_CLUSTER: "postgres-cluster=http://etcd:2380"
+      ETCD_INITIAL_CLUSTER_STATE: "new"
+      ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+
+  postgres0:
+    image: patroni
+    environment:
+      PATRONI_SCOPE: postgres-cluster
+      PATRONI_NAME: postgres0
+      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"
+      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres0:8008"
+      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres0:5432"
+      PATRONI_ETCD_HOSTS: "etcd:2379"
+      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"
+    volumes:
+      - ./data0:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      - "8008:8008"
+
+  postgres1:
+    image: patroni
+    environment:
+      PATRONI_SCOPE: postgres-cluster
+      PATRONI_NAME: postgres1
+      PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"
+      PATRONI_RESTAPI_CONNECT_ADDRESS: "postgres1:8008"
+      PATRONI_POSTGRESQL_LISTEN: "0.0.0.0:5432"
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: "postgres1:5432"
+      PATRONI_ETCD_HOSTS: "etcd:2379"
+      PATRONI_POSTGRESQL_DATA_DIR: "/var/lib/postgresql/data"
+    volumes:
+      - ./data1:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+      - "8009:8008"
+
+  haproxy:
+    image: haproxy:2.3
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "5000:5000"
