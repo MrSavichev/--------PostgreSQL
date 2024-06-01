@@ -5,9 +5,9 @@ def insert_rows():
     conn = None  # Инициализируем переменную для подключения к базе данных как None
     while True:  # Начинаем бесконечный цикл
         try:
-            # Устанавливаем соединение с базой данных через HAProxy
+            # Используем IP-адрес контейнера HAProxy
             conn = psycopg2.connect(
-                host="haproxy",  # Подключаемся через имя контейнера HAProxy
+                host="172.20.0.2",  # Подключаемся через имя контейнера HAProxy
                 database="postgres",  # Имя базы данных
                 user="postgres",  # Имя пользователя базы данных
                 password="postgres"  # Пароль пользователя
