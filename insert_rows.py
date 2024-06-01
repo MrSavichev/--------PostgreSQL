@@ -8,6 +8,7 @@ def insert_rows():
             # Используем IP-адрес контейнера HAProxy
             conn = psycopg2.connect(
                 host="172.20.0.2",  # Подключаемся через имя контейнера HAProxy
+                port=5000,  # Указываем порт HAProxy
                 database="postgres",  # Имя базы данных
                 user="postgres",  # Имя пользователя базы данных
                 password="postgres"  # Пароль пользователя
