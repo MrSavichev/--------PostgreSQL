@@ -18,7 +18,7 @@ def insert_rows():
             # Создаем таблицу, если она ещё не существует
             cur.execute("CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, timestamp TIMESTAMPTZ DEFAULT NOW())")
             # Вставляем новую строку в таблицу
-            cur.execute("INSERT INTO test_table (DEFAULT) VALUES (DEFAULT)")
+            cur.execute("INSERT INTO test_table DEFAULT VALUES")
             conn.commit()  # Применяем изменения в базе данных
 
             cur.close()  # Закрываем курсор
