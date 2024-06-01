@@ -21,6 +21,7 @@ services:  # Определяем сервисы (контейнеры), кот�
   postgres0:  # Первый экземпляр сервиса базы данных PostgreSQL с Patroni
     image: postgres:13  # Используем образ citusdata/patroni из Docker Hub
     environment:  # Переменные окружения для Patroni
+      POSTGRES_PASSWORD: postgres  # Задаем пароль для суперпользователя
       PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
       PATRONI_NAME: postgres0  # Имя этого экземпляра Patroni
       PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"  # Адрес для прослушивания REST API
@@ -38,6 +39,7 @@ services:  # Определяем сервисы (контейнеры), кот�
   postgres1:  # Второй экземпляр сервиса базы данных PostgreSQL с Patroni
     image: postgres:13  # Используем образ citusdata/patroni из Docker Hub
     environment:  # Переменные окружения для Patroni
+      POSTGRES_PASSWORD: postgres  # Задаем пароль для суперпользователя
       PATRONI_SCOPE: postgres-cluster  # Имя кластера Patroni
       PATRONI_NAME: postgres1  # Имя этого экземпляра Patroni
       PATRONI_RESTAPI_LISTEN: "0.0.0.0:8008"  # Адрес для прослушивания REST API
