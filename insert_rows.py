@@ -7,7 +7,7 @@ def insert_rows():
         try:
             # Устанавливаем соединение с базой данных через HAProxy
             conn = psycopg2.connect(
-                host="postgres-cluster-haproxy-1",  # Подключаемся через имя контейнера HAProxy
+                host="haproxy",  # Подключаемся через имя контейнера HAProxy
                 database="postgres",  # Имя базы данных
                 user="postgres",  # Имя пользователя базы данных
                 password="postgres"  # Пароль пользователя
